@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { OnboardingStep, Bookmark } from '@/types';
+import { resolveBookmarkFavicon } from '@/utils/extractMetadata';
 
 const STORAGE_VERSION = 'v1';
 const STEP_KEY = 'stash_step';
@@ -15,13 +16,41 @@ export function useOnboardingState() {
   };
 
   useEffect(() => {
+    const upgradeFavicons = async (loadedBookmarks: Bookmark[]) => {
+      let hasChanges = false;
+
+      const upgradedBookmarks = await Promise.all(
+        loadedBookmarks.map(async (bookmark) => {
+          if (!bookmark.url) return bookmark;
+
+          const resolvedFavicon = await resolveBookmarkFavicon(bookmark.url, bookmark.favicon || null);
+          if (resolvedFavicon && resolvedFavicon !== bookmark.favicon) {
+            hasChanges = true;
+            return {
+              ...bookmark,
+              favicon: resolvedFavicon,
+            };
+          }
+
+          return bookmark;
+        })
+      );
+
+      if (hasChanges) {
+        setBookmarks(upgradedBookmarks);
+        persistBookmarks(upgradedBookmarks);
+      }
+    };
+
     const savedStep = localStorage.getItem(STEP_KEY);
     const savedBookmarks = localStorage.getItem(BOOKMARKS_KEY);
     const legacyBookmarks = localStorage.getItem(LEGACY_BOOKMARKS_KEY);
     
     if (savedBookmarks) {
       try {
-        setBookmarks(JSON.parse(savedBookmarks));
+        const parsedBookmarks = JSON.parse(savedBookmarks) as Bookmark[];
+        setBookmarks(parsedBookmarks);
+        void upgradeFavicons(parsedBookmarks);
       } catch (e) {
         console.error('Failed to parse bookmarks:', e);
       }
@@ -31,6 +60,7 @@ export function useOnboardingState() {
         setBookmarks(parsedLegacy);
         persistBookmarks(parsedLegacy);
         localStorage.removeItem(LEGACY_BOOKMARKS_KEY);
+        void upgradeFavicons(parsedLegacy);
       } catch (e) {
         console.error('Failed to parse legacy bookmarks:', e);
       }
