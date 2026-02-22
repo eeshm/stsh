@@ -5,6 +5,7 @@ import { AddEditForm } from '@/components/AddEditForm';
 import { EmptyState } from '@/components/EmptyState';
 import { BookmarksGrid } from '@/components/BookmarksGrid';
 import { AppLayout, Main } from './AppLayout';
+import { extractPageMetadata } from '@/utils/extractMetadata';
 
 interface DashboardProps {
   bookmarks: Bookmark[];
@@ -111,18 +112,21 @@ export function Dashboard({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [editMode, isSearchOpen, searchQuery, showAddForm]);
 
-  const handleSubmit = async (e: React.FormEvent, metadata?: { title: string; image: string | null; favicon: string | null }, normalizedUrl?: string) => {
+  const handleSubmit = (e: React.FormEvent, _metadata?: { title: string; image: string | null; favicon: string | null }, normalizedUrl?: string) => {
     e.preventDefault();
     const finalUrl = normalizedUrl || url.trim();
     if (!finalUrl) return;
 
+    const needsMetadata = !editingBookmark && (!title.trim() || !image);
+    const bookmarkId = editingBookmark?.id || `bookmark_${Date.now()}`;
+
     const bookmarkData: Bookmark = {
-      id: editingBookmark?.id || `bookmark_${Date.now()}`,
-      title: title.trim() || metadata?.title || (await getPageTitle(finalUrl)) || new URL(finalUrl).hostname,
+      id: bookmarkId,
+      title: title.trim() || (() => { try { return new URL(finalUrl).hostname; } catch { return 'Bookmark'; } })(),
       url: finalUrl,
       tags: tags.trim() ? tags.split(',').map(tag => tag.trim()).filter(Boolean) : [],
-      image: image || metadata?.image || null,
-      favicon: favicon || metadata?.favicon || null,
+      image: image || null,
+      favicon: favicon || null,
       createdAt: editingBookmark?.createdAt || new Date().toISOString(),
     };
 
@@ -133,13 +137,17 @@ export function Dashboard({
     }
 
     resetForm();
-  };
 
-  const getPageTitle = async (url: string): Promise<string | null> => {
-    try {
-      return new URL(url).hostname;
-    } catch {
-      return null;
+    // Fetch metadata in the background and silently update the card
+    if (needsMetadata) {
+      extractPageMetadata(finalUrl).then((meta) => {
+        onUpdateBookmark({
+          ...bookmarkData,
+          title: title.trim() || meta.title || bookmarkData.title,
+          image: image || meta.image || null,
+          favicon: favicon || meta.favicon || null,
+        });
+      }).catch(() => { /* silently ignore */ });
     }
   };
 

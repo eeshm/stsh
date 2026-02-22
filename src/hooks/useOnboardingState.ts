@@ -28,29 +28,37 @@ export function useOnboardingState() {
   };
 
   const addBookmarks = (newBookmarks: Bookmark[]) => {
-    const updated = [...bookmarks, ...newBookmarks];
-    setBookmarks(updated);
-    localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+    setBookmarks(prev => {
+      const updated = [...prev, ...newBookmarks];
+      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const addBookmark = (bookmark: Bookmark) => {
-    const updated = [...bookmarks, bookmark];
-    setBookmarks(updated);
-    localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+    setBookmarks(prev => {
+      const updated = [...prev, bookmark];
+      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const updateBookmark = (updatedBookmark: Bookmark) => {
-    const updated = bookmarks.map(bookmark =>
-      bookmark.id === updatedBookmark.id ? updatedBookmark : bookmark
-    );
-    setBookmarks(updated);
-    localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+    setBookmarks(prev => {
+      const updated = prev.map(bookmark =>
+        bookmark.id === updatedBookmark.id ? updatedBookmark : bookmark
+      );
+      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const deleteBookmark = (id: string) => {
-    const updated = bookmarks.filter(bookmark => bookmark.id !== id);
-    setBookmarks(updated);
-    localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+    setBookmarks(prev => {
+      const updated = prev.filter(bookmark => bookmark.id !== id);
+      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const searchBookmarks = (query: string) => {

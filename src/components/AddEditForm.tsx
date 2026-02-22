@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { type Bookmark } from '@/types/index';
 import { motion, AnimatePresence } from 'motion/react';
-import { extractPageMetadata } from '@/utils/extractMetadata';
 import { BookmarkIcon } from '@/icons/logo';
 
 interface AddEditFormProps {
@@ -37,7 +36,6 @@ export function AddEditForm({
   onSubmit,
   onClose,
 }: AddEditFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const urlInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -121,7 +119,7 @@ export function AddEditForm({
                 </button>
               </div>
 
-              <form onSubmit={async (e) => {
+              <form onSubmit={(e) => {
                 e.preventDefault();
                 if (!url.trim()) {
                   setError('Please enter a URL');
@@ -135,24 +133,12 @@ export function AddEditForm({
                   setError('Please enter a valid URL');
                   return;
                 }
-
                 if (finalUrl !== url) {
                   onUrlChange(finalUrl);
                 }
 
-                let metadata = { title: '', image: null as string | null, favicon: null as string | null };
-                if (!title || !image) {
-                  setIsLoading(true);
-                  try {
-                    metadata = await extractPageMetadata(finalUrl);
-                  } catch (error) {
-                    console.error('Failed to extract metadata:', error);
-                  } finally {
-                    setIsLoading(false);
-                  }
-                }
-                // Submit with metadata and normalized URL
-                onSubmit(e, metadata, finalUrl);
+                // Submit immediately — metadata will be fetched in the background
+                onSubmit(e, undefined, finalUrl);
               }}>
                 <div className='p-4 space-y-4'>
                   <div className='space-y-1.5 relative'>
@@ -198,10 +184,9 @@ export function AddEditForm({
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isLoading}
                     className="h-8 text-[10px] bg-black text-white hover:bg-gray-800 sm:bg-[#edecec] sm:text-black sm:hover:bg-[#edecec]/90 border border-transparent sm:border-[#edecec]/10 min-w-20"
                   >
-                    {isLoading ? <Loader2 className="size-3 animate-spin" /> : (bookmark ? 'Save Changes' : 'Add Bookmark')}
+                    {bookmark ? 'Save Changes' : 'Add Bookmark'}
                   </Button>
                 </div>
               </form>
