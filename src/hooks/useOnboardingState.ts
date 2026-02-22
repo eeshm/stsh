@@ -1,19 +1,68 @@
 import { useState, useEffect } from 'react';
 import type { OnboardingStep, Bookmark } from '@/types';
+import { resolveBookmarkFavicon } from '@/utils/extractMetadata';
+
+const STORAGE_VERSION = 'v1';
+const STEP_KEY = 'stash_step';
+const BOOKMARKS_KEY = `stash_bookmarks_${STORAGE_VERSION}`;
+const LEGACY_BOOKMARKS_KEY = 'stash_bookmarks';
 
 export function useOnboardingState() {
   const [step, setStep] = useState<OnboardingStep>('dashboard');
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
 
+  const persistBookmarks = (value: Bookmark[]) => {
+    localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(value));
+  };
+
   useEffect(() => {
-    const savedStep = localStorage.getItem('stash_step');
-    const savedBookmarks = localStorage.getItem('stash_bookmarks');
+    const upgradeFavicons = async (loadedBookmarks: Bookmark[]) => {
+      let hasChanges = false;
+
+      const upgradedBookmarks = await Promise.all(
+        loadedBookmarks.map(async (bookmark) => {
+          if (!bookmark.url) return bookmark;
+
+          const resolvedFavicon = await resolveBookmarkFavicon(bookmark.url, bookmark.favicon || null);
+          if (resolvedFavicon && resolvedFavicon !== bookmark.favicon) {
+            hasChanges = true;
+            return {
+              ...bookmark,
+              favicon: resolvedFavicon,
+            };
+          }
+
+          return bookmark;
+        })
+      );
+
+      if (hasChanges) {
+        setBookmarks(upgradedBookmarks);
+        persistBookmarks(upgradedBookmarks);
+      }
+    };
+
+    const savedStep = localStorage.getItem(STEP_KEY);
+    const savedBookmarks = localStorage.getItem(BOOKMARKS_KEY);
+    const legacyBookmarks = localStorage.getItem(LEGACY_BOOKMARKS_KEY);
     
     if (savedBookmarks) {
       try {
-        setBookmarks(JSON.parse(savedBookmarks));
+        const parsedBookmarks = JSON.parse(savedBookmarks) as Bookmark[];
+        setBookmarks(parsedBookmarks);
+        void upgradeFavicons(parsedBookmarks);
       } catch (e) {
         console.error('Failed to parse bookmarks:', e);
+      }
+    } else if (legacyBookmarks) {
+      try {
+        const parsedLegacy = JSON.parse(legacyBookmarks) as Bookmark[];
+        setBookmarks(parsedLegacy);
+        persistBookmarks(parsedLegacy);
+        localStorage.removeItem(LEGACY_BOOKMARKS_KEY);
+        void upgradeFavicons(parsedLegacy);
+      } catch (e) {
+        console.error('Failed to parse legacy bookmarks:', e);
       }
     }
     
@@ -24,13 +73,13 @@ export function useOnboardingState() {
 
   const updateStep = (newStep: OnboardingStep) => {
     setStep(newStep);
-    localStorage.setItem('stash_step', newStep);
+    localStorage.setItem(STEP_KEY, newStep);
   };
 
   const addBookmarks = (newBookmarks: Bookmark[]) => {
     setBookmarks(prev => {
       const updated = [...prev, ...newBookmarks];
-      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      persistBookmarks(updated);
       return updated;
     });
   };
@@ -38,7 +87,7 @@ export function useOnboardingState() {
   const addBookmark = (bookmark: Bookmark) => {
     setBookmarks(prev => {
       const updated = [...prev, bookmark];
-      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      persistBookmarks(updated);
       return updated;
     });
   };
@@ -48,7 +97,7 @@ export function useOnboardingState() {
       const updated = prev.map(bookmark =>
         bookmark.id === updatedBookmark.id ? updatedBookmark : bookmark
       );
-      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      persistBookmarks(updated);
       return updated;
     });
   };
@@ -56,7 +105,7 @@ export function useOnboardingState() {
   const deleteBookmark = (id: string) => {
     setBookmarks(prev => {
       const updated = prev.filter(bookmark => bookmark.id !== id);
-      localStorage.setItem('stash_bookmarks', JSON.stringify(updated));
+      persistBookmarks(updated);
       return updated;
     });
   };

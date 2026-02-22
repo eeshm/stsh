@@ -97,7 +97,7 @@ export function AddEditForm({
             className="fixed top-20 sm:top-32 left-1/2 -translate-x-1/2 w-full max-w-lg z-50 flex justify-center px-4 sm:px-0"
           >
             <div className="bg-white sm:bg-[#0a0a0a] rounded-xl border border-gray-200 sm:border-[#edecec]/10 shadow-2xl w-full sm:w-[450px] overflow-hidden">
-              <div className="flex items-center border-b border-gray-200 sm:border-[#edecec]/10 justify-between p-4 relative bg-gray-50/50 sm:bg-transparent">
+              <div className="flex items-center border-b border-gray-200 sm:border-[#edecec]/8 justify-between p-4 relative bg-gray-50/50 sm:bg-[#0a0a0a]">
                 <div className='flex items-center gap-3'>
                   <div className='bg-white sm:bg-[#edecec]/10 border border-gray-200 sm:border-transparent rounded-lg p-2'>
                     <BookmarkIcon className="size-4 text-black sm:text-[#edecec]" />
@@ -174,19 +174,18 @@ export function AddEditForm({
                 </div>
                 
                 <div className='px-4 pb-4 flex justify-end gap-2'>
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
                     onClick={onClose}
-                    className="h-8 text-[10px] text-gray-500 hover:text-gray-900 sm:text-[#edecec]/40 sm:hover:text-[#edecec] hover:bg-gray-100 sm:hover:bg-[#edecec]/5"
+                    className="inline-flex items-center justify-center cursor-pointer whitespace-nowrap font-medium transition-colors rounded-md px-3 h-7 text-xs border-[0.5] bg-white sm:bg-[#0a0a0a] text-gray-700 sm:border-white/10 sm:text-white"
                   >
                     Cancel
-                  </Button>
+                  </button>
                   <Button
                     type="submit"
-                    className="h-8 text-[10px] bg-black text-white hover:bg-gray-800 sm:bg-[#edecec] sm:text-black sm:hover:bg-[#edecec]/90 border border-transparent sm:border-[#edecec]/10 min-w-20"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none px-4 py-2 h-7 cursor-pointer text-[10px] bg-black sm:bg-white sm:text-black text-white  border border-black/10"
                   >
-                    {bookmark ? 'Save Changes' : 'Add Bookmark'}
+                    {bookmark ? 'Save Changes' : 'Add'}
                   </Button>
                 </div>
               </form>
@@ -196,6 +195,7 @@ export function AddEditForm({
       )}
     </AnimatePresence>
   );
+
 }
 
 

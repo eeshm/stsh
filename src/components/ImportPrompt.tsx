@@ -52,18 +52,18 @@ export function ImportPrompt({ onImportComplete, onBack, onSkip }: ImportPromptP
 
   return (
     <AppLayout>
-    <header>
-      <div className="mx-auto px-4 py-1 sm:border-0 border-b border-gray-200 border-dashed sm:h-full h-14 ">
-        <div className="flex items-center pt-1  justify-between h-full">
-          <div className="flex">
+      <header className="relative">
+        <div className="mx-auto px-4 sm:border-0 border-b border-gray-200/80 border-dashed h-14 sm:h-auto sm:py-2.5">
+          <div className="flex items-center justify-between h-full">
+            <div className="flex items-center">
               <StashLogo className="size-10 sm:size-12" />
             </div>
             <button
               onClick={onBack}
-              className="text-gray-500 sm:text-black hover:text-gray-900 sm:hover:text-black/70 rounded-full text-sm sm:text-xs flex items-center gap-1 p-2 transition-colors"
+              className="flex items-center gap-1.5 p-1.5 rounded-lg text-gray-500 hover:text-gray-900  transition-colors text-sm sm:text-xs"
             >
-              <ArrowLeft className="size-4" />
-              <span className="hidden sm:inline">Back</span>
+              <ArrowLeft className="size-3 sm:size-3.5" />
+              <span className="hidden sm:inline text-xs">Back</span>
             </button>
           </div>
         </div>

@@ -23,7 +23,10 @@ export function BookmarksGrid({
     <>
       {/* Bookmarks Grid */}
       {bookmarks.length > 0 ? (
-        <div className="flex flex-wrap space-x-2 space-y-2 justify-evenly py-4">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5 p-1 sm:p-2"
+          style={{ contentVisibility: 'auto', containIntrinsicSize: '420px' }}
+        >
           {bookmarks.map((bookmark) => (
             <BookmarkCard
               key={bookmark.id}
@@ -41,7 +44,7 @@ export function BookmarksGrid({
           </p>
           <button
             onClick={onClearSearch}
-            className="mt-4 text-xs text-gray-400 hover:text-gray-900 sm:text-[#edecec]/30 sm:hover:text-[#edecec] transition-colors underline underline-offset-4"
+            className="mt-4 text-xs text-gray-400 hover:text-gray-900 sm:text-[#edecec]/30 sm:hover:text-[#edecec] transition-colors underline underline-offset-4 cursor-pointer"
           >
             Clear search
           </button>
