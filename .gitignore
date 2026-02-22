@@ -23,6 +23,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .env.local
 /.agents/
 .agents/
+.agent/
+/.agent/
 
 # caches
 .eslintcache

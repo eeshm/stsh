@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { TextScramble } from '@/components/ui/text-scramble';
 
+const scrambledBookmarkIds = new Set<string>();
+
 interface BookmarkCardProps {
   bookmark: Bookmark;
   onDelete?: (id: string) => void;
@@ -16,9 +18,11 @@ interface BookmarkCardProps {
 export function BookmarkCard({ bookmark, onDelete, onEdit, editMode }: BookmarkCardProps) {
   const [hoverSide, setHoverSide] = useState<'left' | 'right' | null>(null);
   const [isInitialMount, setIsInitialMount] = useState(true);
+  const shouldScrambleOnMount = !scrambledBookmarkIds.has(bookmark.id);
 
   React.useEffect(() => {
     setIsInitialMount(false);
+    scrambledBookmarkIds.add(bookmark.id);
   }, []);
 
   const getDomain = (url: string) => {
@@ -84,7 +88,7 @@ export function BookmarkCard({ bookmark, onDelete, onEdit, editMode }: BookmarkC
             <div className="size-3.5 rounded-sm shrink-0 bg-gray-100 sm:bg-[#edecec]/10" />
           )}
           <h3 className="font-medium text-xs sm:text-sm truncate leading-none pt-0.5 text-gray-900 sm:text-[#edecec] group-hover:text-black sm:group-hover:text-white transition-colors">
-            <TextScramble speed={0.05}>
+            <TextScramble speed={0.05} trigger={shouldScrambleOnMount}>
               {bookmark.title}
             </TextScramble>
           </h3>

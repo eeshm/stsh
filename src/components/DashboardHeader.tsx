@@ -161,22 +161,6 @@ export function DashboardHeader({
         </div>
       </div>
 
-      {/* Mode indicator bar */}
-      <AnimatePresence>
-        {editMode && (
-          <motion.div
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            exit={{ scaleX: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            style={{ transformOrigin: 'left' }}
-            className={cn(
-              "absolute bottom-0 left-0 right-0 h-px",
-              editMode === 'edit' ? "bg-blue-500/50" : "bg-red-500/50"
-            )}
-          />
-        )}
-      </AnimatePresence>
     </header>
   );
 }
