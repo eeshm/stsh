@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { type Bookmark } from '@/types/index';
 import { DashboardHeader } from '@/components/DashboardHeader';
 import { AddEditForm } from '@/components/AddEditForm';
@@ -35,7 +35,15 @@ export function Dashboard({
   const [favicon, setFavicon] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'edit' | 'delete' | null>(null);
 
-  const displayedBookmarks = searchQuery.trim() ? onSearchBookmarks(searchQuery) : bookmarks;
+  const searchQueryRef = useRef(searchQuery);
+  const isSearchOpenRef = useRef(isSearchOpen);
+  const editModeRef = useRef(editMode);
+  const showAddFormRef = useRef(showAddForm);
+
+  const displayedBookmarks = useMemo(
+    () => (searchQuery.trim() ? onSearchBookmarks(searchQuery) : bookmarks),
+    [searchQuery, onSearchBookmarks, bookmarks]
+  );
 
   const resetForm = () => {
     setUrl('');
@@ -53,19 +61,31 @@ export function Dashboard({
   };
 
   useEffect(() => {
+    searchQueryRef.current = searchQuery;
+    isSearchOpenRef.current = isSearchOpen;
+    editModeRef.current = editMode;
+    showAddFormRef.current = showAddForm;
+  }, [searchQuery, isSearchOpen, editMode, showAddForm]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const currentSearchQuery = searchQueryRef.current;
+      const currentIsSearchOpen = isSearchOpenRef.current;
+      const currentEditMode = editModeRef.current;
+      const currentShowAddForm = showAddFormRef.current;
+
       // Ignore if input or textarea is focused (except for Escape)
       if (
         (e.target as HTMLElement).tagName === 'INPUT' ||
         (e.target as HTMLElement).tagName === 'TEXTAREA'
       ) {
         if (e.key === 'Escape') {
-          if (searchQuery) {
+          if (currentSearchQuery) {
             setSearchQuery('');
             e.preventDefault();
             return;
           }
-          if (isSearchOpen) {
+          if (currentIsSearchOpen) {
             setIsSearchOpen(false);
             e.preventDefault();
             return;
@@ -83,34 +103,35 @@ export function Dashboard({
       // Add: A or Cmd+B
       if (e.key === 'a' || e.key === 'A' || ((e.metaKey || e.ctrlKey) && e.key === 'b')) {
         e.preventDefault();
-        handleAddNew();
+        resetForm();
+        setShowAddForm(true);
       }
 
       // Edit Mode: E
       if (e.key === 'e' || e.key === 'E') {
         e.preventDefault();
-        if (editMode === 'edit') setEditMode(null);
-        else if (editMode !== 'delete') setEditMode('edit');
+        if (currentEditMode === 'edit') setEditMode(null);
+        else if (currentEditMode !== 'delete') setEditMode('edit');
       }
 
       // Delete Mode: D
       if (e.key === 'd' || e.key === 'D') {
         e.preventDefault();
-        if (editMode === 'delete') setEditMode(null);
-        else if (editMode !== 'edit') setEditMode('delete');
+        if (currentEditMode === 'delete') setEditMode(null);
+        else if (currentEditMode !== 'edit') setEditMode('delete');
       }
 
       // Escape to clear modes
       if (e.key === 'Escape') {
-        if (editMode) setEditMode(null);
-        if (showAddForm) setShowAddForm(false);
-        if (isSearchOpen && !searchQuery) setIsSearchOpen(false);
+        if (currentEditMode) setEditMode(null);
+        if (currentShowAddForm) setShowAddForm(false);
+        if (currentIsSearchOpen && !currentSearchQuery) setIsSearchOpen(false);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editMode, isSearchOpen, searchQuery, showAddForm]);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent, _metadata?: { title: string; image: string | null; favicon: string | null }, normalizedUrl?: string) => {
     e.preventDefault();

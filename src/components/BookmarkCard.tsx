@@ -110,8 +110,8 @@ export function BookmarkCard({ bookmark, onDelete, onEdit, editMode }: BookmarkC
               exit={{ opacity: 0, x: 6 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
               onClick={() => onEdit(bookmark)}
-              className="p-1.5 rounded-lg cursor-pointer text-blue-500 hover:bg-[#635cff] hover:text-white transition-colors"
-            >
+              className="p-1.5 rounded-lg cursor-pointer text-[#2c21ff] hover:bg-[#2c21ff] hover:text-white transition-colors"
+            > 
               <EditIcon className="size-3" stroke="currentColor" />
             </motion.button>
           )}

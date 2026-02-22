@@ -23,7 +23,10 @@ export function BookmarksGrid({
     <>
       {/* Bookmarks Grid */}
       {bookmarks.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5 p-1 sm:p-2">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5 p-1 sm:p-2"
+          style={{ contentVisibility: 'auto', containIntrinsicSize: '420px' }}
+        >
           {bookmarks.map((bookmark) => (
             <BookmarkCard
               key={bookmark.id}

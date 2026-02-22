@@ -61,7 +61,7 @@ export function DashboardHeader({
                           value={searchQuery}
                           onChange={(e) => onSearchChange(e.target.value)}
                           autoFocus
-                          className="h-7 w-36 sm:w-48 rounded-lg shadow-2xl shdao  bg-white text-sm placeholder:text-gray-400 text-gray-900 focus:ring-0 focus:shadow-lg pr-6"
+                          className="h-7 w-36 sm:w-48 rounded-lg shadow-2xl bg-white text-sm placeholder:text-gray-400 text-gray-900 focus:ring-0 focus:shadow-lg pr-6"
                         />
                         {searchQuery && (
                           <button
