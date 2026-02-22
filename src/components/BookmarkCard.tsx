@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Edit3 } from 'lucide-react';
+import { EditIcon, TrashIcon123 } from '@/icons/logo';
 import { type Bookmark } from '@/types/index';
 import { motion, AnimatePresence } from 'motion/react';
-import { TrashIcon123 } from '@/icons/logo';
+
 import { cn } from '@/lib/utils';
 import { TextScramble } from '@/components/ui/text-scramble';
 
@@ -43,83 +43,92 @@ export function BookmarkCard({ bookmark, onDelete, onEdit, editMode }: BookmarkC
 
   return (
     <motion.div
-      initial={{ y: 0, rotate: 0, left: 0 ,x:0}}
+      initial={{ y: 0, rotate: 0, x: 0 }}
       transition={{
         ease: "easeInOut",
         duration: 0.15,
       }}
       animate={!editMode && hoverSide && !isInitialMount ? {
-        y: -4,
-        rotate: hoverSide === 'left' ? -0.5 : 0.5,
+        y: -3,
+        rotate: hoverSide === 'left' ? -0.4 : 0.4,
       } : { y: 0, rotate: 0 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "group relative w-full h-8 sm:h-10",
-        "flex items-center justify-between rounded-lg overflow-visible max-w-[250px] sm:max-w-xs transition-colors duration-200",
+        "group relative w-full h-10",
+        "flex items-center justify-between rounded-lg overflow-hidden transition-all duration-200",
         "bg-white border border-gray-200 hover:border-gray-300",
-        "sm:bg-[#edecec]/10 sm:border-[#edecec]/10 sm:hover:border-[#edecec]/20",
+        "sm:bg-[#edecec]/8 sm:border-[#edecec]/10 sm:hover:border-[#edecec]/25",
       )}
     >
       <a
         href={bookmark.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex items-center w-full gap-3 px-3 ${editMode ? 'pointer-events-none opacity-50 ' : ''}`}
+        className={cn(
+          "flex items-center gap-3 px-3 min-w-0 flex-1",
+          editMode ? "pointer-events-none" : ""
+        )}
       >
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
           {bookmark.favicon ? (
             <img
               src={bookmark.favicon}
               alt=""
-              className="sm:size-4 size-3 rounded-sm shrink-0"
+              className="size-3.5 rounded-sm shrink-0 opacity-80 group-hover:opacity-100 transition-opacity"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
           ) : (
-            <div className="size-4 rounded-sm shrink-0 bg-gray-100 sm:bg-[#edecec]/10" />
+            <div className="size-3.5 rounded-sm shrink-0 bg-gray-100 sm:bg-[#edecec]/10" />
           )}
-          <h3 className="font-medium sm:text-sm text-xs text-gray-900 sm:text-[#edecec] truncate leading-none pt-0.5">
-            <TextScramble
-              speed={0.05}
-              className="group-hover:text-black  sm:group-hover:text-white transition-colors"
-            >
+          <h3 className="font-medium text-xs sm:text-sm truncate leading-none pt-0.5 text-gray-900 sm:text-[#edecec] group-hover:text-black sm:group-hover:text-white transition-colors">
+            <TextScramble speed={0.05}>
               {bookmark.title}
             </TextScramble>
           </h3>
         </div>
-        <p className=" text-[8px] sm:text-[10px] text-gray-400 sm:text-[#edecec]/40 truncate shrink-0 font-mono transition-opacity duration-300">
+        <p className={cn(
+          "text-[9px] sm:text-[10px] text-gray-400 sm:text-[#edecec]/35 truncate shrink-0 font-mono transition-opacity duration-200",
+          editMode ? "opacity-0" : "opacity-100"
+        )}>
           {getDomain(bookmark.url)}
         </p>
       </a>
 
-      <AnimatePresence>
-        {editMode === 'edit' && onEdit && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8, x: -10 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            exit={{ opacity: 0, scale: 0.8, x: -10 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => onEdit(bookmark)}
-            className="absolute -right-6.5 flex items-center justify-center cursor-pointer rounded-md hover:text-white hover:bg-blue-600 text-blue-500  sm:hover:text-white p-1.5 transition-colors"
-          >
-            <Edit3 className="size-3" />
-          </motion.button>
-        )}
-        {editMode === 'delete' && onDelete && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8, x: -10 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            exit={{ opacity: 0, scale: 0.8, x: -10 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => onDelete(bookmark.id)}
-            className="absolute -right-6.5 flex items-center justify-center cursor-pointer rounded-md hover:text-white text-red-600 hover:bg-red-600  sm:hover:text-white p-1.5 transition-colors"
-          >
-            <TrashIcon123 className="size-3" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <div className="absolute right-1.5 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+        <AnimatePresence>
+          {editMode === 'edit' && onEdit && (
+            <motion.button
+              initial={{ opacity: 0, x: 6 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 6 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              onClick={() => onEdit(bookmark)}
+              className="p-1.5 rounded-lg cursor-pointer text-blue-500 hover:bg-[#635cff] hover:text-white transition-colors"
+            >
+              <EditIcon className="size-3" stroke="currentColor" />
+            </motion.button>
+          )}
+          {editMode === 'delete' && onDelete && (
+            <motion.button
+              initial={{ opacity: 0, x: 6 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 6 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              onClick={() => onDelete(bookmark.id)}
+              className="p-1.5 rounded-lg cursor-pointer text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+            >
+              <TrashIcon123
+                className="size-3"
+                fill="currentColor"
+                secondaryfill="currentColor"
+              />
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }

@@ -97,7 +97,7 @@ export function AddEditForm({
             className="fixed top-20 sm:top-32 left-1/2 -translate-x-1/2 w-full max-w-lg z-50 flex justify-center px-4 sm:px-0"
           >
             <div className="bg-white sm:bg-[#0a0a0a] rounded-xl border border-gray-200 sm:border-[#edecec]/10 shadow-2xl w-full sm:w-[450px] overflow-hidden">
-              <div className="flex items-center border-b border-gray-200 sm:border-[#edecec]/10 justify-between p-4 relative bg-gray-50/50 sm:bg-transparent">
+              <div className="flex items-center border-b border-gray-200 sm:border-[#edecec]/8 justify-between p-4 relative bg-gray-50/50 sm:bg-[#0a0a0a]">
                 <div className='flex items-center gap-3'>
                   <div className='bg-white sm:bg-[#edecec]/10 border border-gray-200 sm:border-transparent rounded-lg p-2'>
                     <BookmarkIcon className="size-4 text-black sm:text-[#edecec]" />

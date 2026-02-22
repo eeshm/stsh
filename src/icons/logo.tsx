@@ -62,16 +62,21 @@ export function TrashIcon123({ fill = "currentColor", secondaryfill, ...props }:
 }
 
 
-export function EditIcon(props: React.SVGProps<SVGSVGElement>) {
+
+// oklch(58% .2346 278.29)
+
+export function EditIcon({ stroke = "currentColor", secondarystroke, ...props }: React.SVGProps<SVGSVGElement> & { secondarystroke?: string }) {
+  secondarystroke = secondarystroke || stroke;
   return (
     <svg xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
       width="24px"
       height="24px"
-      viewBox="0 0 24 24" {...props}><line data-cap="butt" data-color="color-2" x1="14" y1="5" x2="19" y2="10" fill="none" stroke="rgba(75, 85, 99, 1)" strokeMiterlimit="10" strokeWidth="2">
-      </line><path d="M9,20l-7,2,2-7L16.414,2.586c.781-.781,2.047-.781,2.828,0l2.172,2.172c.781,.781,.781,2.047,0,2.828l-12.414,12.414Z" fill="none" stroke="rgba(75, 85, 99, 1)" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></path></svg>
-
+      viewBox="0 0 26 24" {...props}>
+      <line data-cap="butt" data-color="color-2" x1="14" y1="5" x2="19" y2="10" fill="none" stroke={secondarystroke} strokeMiterlimit="10" strokeWidth="2" opacity="0.4" />
+      <path d="M9,20l-7,2,2-7L16.414,2.586c.781-.781,2.047-.781,2.828,0l2.172,2.172c.781,.781,.781,2.047,0,2.828l-12.414,12.414Z" fill="none" stroke={stroke} strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2" />
+    </svg>
   )
 }
 
