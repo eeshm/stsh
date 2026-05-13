@@ -35,6 +35,8 @@ export function Dashboard({
   const [favicon, setFavicon] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'edit' | 'delete' | null>(null);
 
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
   const searchQueryRef = useRef(searchQuery);
   const isSearchOpenRef = useRef(isSearchOpen);
   const editModeRef = useRef(editMode);
@@ -44,6 +46,16 @@ export function Dashboard({
     () => (searchQuery.trim() ? onSearchBookmarks(searchQuery) : bookmarks),
     [searchQuery, onSearchBookmarks, bookmarks]
   );
+
+  const displayedBookmarksRef = useRef(displayedBookmarks);
+  useEffect(() => {
+    displayedBookmarksRef.current = displayedBookmarks;
+  }, [displayedBookmarks]);
+
+  const focusedIndexRef = useRef(focusedIndex);
+  useEffect(() => {
+    focusedIndexRef.current = focusedIndex;
+  }, [focusedIndex]);
 
   const resetForm = () => {
     setUrl('');
@@ -126,6 +138,47 @@ export function Dashboard({
         if (currentEditMode) setEditMode(null);
         if (currentShowAddForm) setShowAddForm(false);
         if (currentIsSearchOpen && !currentSearchQuery) setIsSearchOpen(false);
+        setFocusedIndex(-1);
+      }
+
+      // Keyboard navigation
+      if (!currentShowAddForm && !currentIsSearchOpen && displayedBookmarksRef.current.length > 0) {
+        const columns = window.innerWidth >= 1280 ? 4 : window.innerWidth >= 768 ? 3 : window.innerWidth >= 640 ? 2 : 1;
+        
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          setFocusedIndex(prev => (prev + 1) % displayedBookmarksRef.current.length);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          setFocusedIndex(prev => (prev - 1 + displayedBookmarksRef.current.length) % displayedBookmarksRef.current.length);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setFocusedIndex(prev => {
+            if (prev === -1) return 0;
+            const next = prev + columns;
+            return next < displayedBookmarksRef.current.length ? next : prev;
+          });
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setFocusedIndex(prev => {
+            if (prev === -1) return 0;
+            const next = prev - columns;
+            return next >= 0 ? next : prev;
+          });
+        } else if (e.key === 'Enter') {
+          const currentIndex = focusedIndexRef.current;
+          if (currentIndex >= 0 && currentIndex < displayedBookmarksRef.current.length) {
+            e.preventDefault();
+            const bookmark = displayedBookmarksRef.current[currentIndex];
+            if (currentEditMode === 'edit') {
+              handleEdit(bookmark);
+            } else if (currentEditMode === 'delete') {
+              handleDelete(bookmark.id);
+            } else {
+              window.open(bookmark.url, '_blank', 'noopener,noreferrer');
+            }
+          }
+        }
       }
     };
 
@@ -239,6 +292,7 @@ export function Dashboard({
             onDelete={handleDelete}
             onClearSearch={() => setSearchQuery('')}
             editMode={editMode}
+            focusedIndex={focusedIndex}
           />
         )}
       </Main>

@@ -3,7 +3,6 @@ import { Search, X, } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TrashIcon123, StashLogo, EditIcon, PlusIcon } from '@/icons/logo';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from "motion/react";
 import { Input } from './ui/input';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
 
@@ -45,40 +44,32 @@ export function DashboardHeader({
           <div className="flex items-center gap-1 h-9">
             {bookmarksCount > 0 && showSearch && (
               <div className="flex items-center h-full">
-                <AnimatePresence>
-                  {isSearchOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className="flex items-center overflow-hidden mr-1"
-                    >
-                      <div className="relative flex items-center">
-                        <Input
-                          type="text"
-                          placeholder="Search…"
-                          value={searchQuery}
-                          onChange={(e) => onSearchChange(e.target.value)}
-                          autoFocus
-                          className="h-7 w-36 sm:w-48 rounded-lg shadow-2xl bg-white text-sm placeholder:text-gray-400 text-gray-900 focus:ring-0 pr-6"
-                        />
-                        {searchQuery && (
-                          <button
-                            onClick={() => onSearchChange('')}
-                            className="absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
-                          >
-                            <X className="size-3" />
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {isSearchOpen && (
+                  <div className="flex items-center mr-1">
+                    <div className="relative flex items-center">
+                      <Input
+                        type="text"
+                        placeholder="Search…"
+                        value={searchQuery}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        autoFocus
+                        className="h-7 w-36 sm:w-48 rounded-lg shadow-sm border border-gray-200/50 bg-white text-sm placeholder:text-gray-400 text-gray-900 focus:ring-0 pr-6"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => onSearchChange('')}
+                          className="absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors active:scale-[0.97]"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <button
                   onClick={() => onSearchOpenChange(!isSearchOpen)}
                   className={cn(
-                    "cursor-pointer flex items-center justify-center p-1.5 rounded-lg transition-colors",
+                    "cursor-pointer flex items-center justify-center p-1.5 rounded-lg transition-all active:scale-[0.97]",
                     isSearchOpen
                       ? "text-gray-700 bg-gray-100"
                       : "text-gray-500 hover:text-gray-700 hover:bg-gray-300/40"
@@ -96,7 +87,7 @@ export function DashboardHeader({
                 onClick={onImportClick}
                 size="sm"
                 variant="ghost"
-                className="px-0 pb-1 text-sm font-medium text-gray-900 hover:bg-transparent hover:opacity-70 transition-all duration-300 underline underline-offset-4 cursor-pointer"
+                className="px-0 pb-1 text-sm font-medium text-gray-900 hover:bg-transparent hover:opacity-70 transition-all duration-300 underline underline-offset-4 cursor-pointer active:scale-[0.97]"
               >
                 Import
               </Button>
@@ -110,12 +101,12 @@ export function DashboardHeader({
                   disabled={editMode === 'delete'}
                   title="Edit Mode (E)"
                   className={cn(
-                    "p-1.5 flex items-center justify-center cursor-pointer transition-all rounded-lg",
+                    "p-1.5 flex items-center justify-center cursor-pointer transition-all active:scale-[0.97] rounded-lg",
                     editMode === 'edit'
                       ? "bg-[#2c21ff] text-white sm:bg-[#2c21ff]"
                       : editMode === 'delete'
                         ? "opacity-30 cursor-not-allowed"
-                        : "text-gray-500  hover:bg-blue-50"
+                        : "text-gray-500 hover:bg-blue-50"
                   )}
                 >
                   <EditIcon
@@ -128,7 +119,7 @@ export function DashboardHeader({
                   disabled={editMode === 'edit'}
                   title="Delete Mode (D)"
                   className={cn(
-                    "p-1.5 flex items-center justify-center cursor-pointer transition-all rounded-lg",
+                    "p-1.5 flex items-center justify-center cursor-pointer transition-all active:scale-[0.97] rounded-lg",
                     editMode === 'delete'
                       ? "bg-red-500 text-white sm:bg-red-500"
                       : editMode === 'edit'
@@ -149,7 +140,7 @@ export function DashboardHeader({
             <button
               onClick={onAddClick}
               title="Add New (A)"
-              className="cursor-pointer flex items-center justify-center p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="cursor-pointer flex items-center justify-center p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all active:scale-[0.97]"
             >
               <PlusIcon className="size-3 sm:size-3.5" />
             </button>

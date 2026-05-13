@@ -1,7 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Geist:wght@100..900&family=Instrument+Serif:ital@0;1&family=Manrope:wght@200..800&family=Oswald:wght@200..700&display=swap');
 @import "../styles/globals.css";
 
+@layer utilities {
+  .animate-stagger-in {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: staggerFadeIn 250ms ease-out forwards;
+  }
+}
 
+@keyframes staggerFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @theme{
   --font-cover: 'Covered By Your Grace', cursive;

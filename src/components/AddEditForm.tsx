@@ -85,15 +85,9 @@ export function AddEditForm({
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 300,
-              damping: 30,
-              mass: 0.8
-            }}
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] } }}
+            exit={{ opacity: 0, y: -10, scale: 0.95, transition: { duration: 0.15, ease: "easeOut" } }}
             className="fixed top-20 sm:top-32 left-1/2 -translate-x-1/2 w-full max-w-lg z-50 flex justify-center px-4 sm:px-0"
           >
             <div className="bg-white sm:bg-[#0a0a0a] rounded-xl border border-gray-200 sm:border-[#edecec]/10 shadow-2xl w-full sm:w-[450px] overflow-hidden">
@@ -177,13 +171,13 @@ export function AddEditForm({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex items-center justify-center cursor-pointer whitespace-nowrap font-medium transition-colors rounded-md px-3 h-7 text-xs border-[0.5] bg-white sm:bg-[#0a0a0a] text-gray-700 sm:border-white/10 sm:text-white"
+                    className="inline-flex items-center justify-center cursor-pointer whitespace-nowrap font-medium transition-all active:scale-[0.97] rounded-md px-3 h-7 text-xs border-[0.5] bg-white sm:bg-[#0a0a0a] text-gray-700 sm:border-white/10 sm:text-white"
                   >
                     Cancel
                   </button>
                   <Button
                     type="submit"
-                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none px-4 py-2 h-7 cursor-pointer text-[10px] bg-black sm:bg-white sm:text-black text-white  border border-black/10"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none px-4 py-2 h-7 cursor-pointer text-[10px] bg-black sm:bg-white sm:text-black text-white border border-black/10 transition-all active:scale-[0.97]"
                   >
                     {bookmark ? 'Save Changes' : 'Add'}
                   </Button>

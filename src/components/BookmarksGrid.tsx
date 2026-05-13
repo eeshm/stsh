@@ -9,6 +9,7 @@ interface BookmarksGridProps {
   onDelete: (id: string) => void;
   onClearSearch: () => void;
   editMode?: 'edit' | 'delete' | null;
+  focusedIndex?: number;
 }
 
 export function BookmarksGrid({
@@ -18,6 +19,7 @@ export function BookmarksGrid({
   onDelete,
   onClearSearch,
   editMode,
+  focusedIndex = -1,
 }: BookmarksGridProps) {
   return (
     <>
@@ -27,13 +29,15 @@ export function BookmarksGrid({
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5 p-1 sm:p-2"
           style={{ contentVisibility: 'auto', containIntrinsicSize: '420px' }}
         >
-          {bookmarks.map((bookmark) => (
+          {bookmarks.map((bookmark, index) => (
             <BookmarkCard
               key={bookmark.id}
               bookmark={bookmark}
+              index={index}
               onEdit={onEdit}
               onDelete={onDelete}
               editMode={editMode}
+              focused={index === focusedIndex}
             />
           ))}
         </div>
